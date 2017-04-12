@@ -11,6 +11,7 @@ import { ActionCreators } from './actions';
 import Config from '../config';
 import Home from './containers/home';
 import About from './containers/about';
+import InputWeight from './containers/inputWeight';
 
 const {
   CardStack: NavigationCardStack,
@@ -29,6 +30,7 @@ class AppNav extends Component {
       {
         'Home': Home,
         'About': About,
+        'InputWeight': InputWeight,
       };
     this.state = {
     }

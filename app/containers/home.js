@@ -3,6 +3,7 @@ import {
     StyleSheet,
     Dimensions,
     View,
+    ScrollView,
 } from 'react-native';
 import {
     Text,
@@ -36,12 +37,19 @@ class Home extends Component {
         this.props.navigator('push', {id: 'About', key: 'About'});
     }
 
+    inputPress() {
+        this.props.navigator('push', {id: 'InputWeight', key: 'InputWeight'});
+    }
+
     render() {
         return (
             <View style={styles.container}>
                 <Text> Welcome to React Native! </Text>
                 <Button block onPress={this.aboutPress.bind(this)}>
                     <Text>About author</Text>
+                </Button>
+                <Button block onPress={this.inputPress.bind(this)}>
+                    <Text>Input</Text>
                 </Button>
             </View>
         );
