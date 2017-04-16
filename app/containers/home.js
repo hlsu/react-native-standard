@@ -4,6 +4,7 @@ import {
     Dimensions,
     View,
     ScrollView,
+    Image,
 } from 'react-native';
 import {
     Text,
@@ -19,6 +20,8 @@ import { ActionCreators } from '../actions';
 
 
 const {height, width} = Dimensions.get('window');
+const logo = require('../images/lua.png');
+
 class Home extends Component {
 
     constructor(props) {
@@ -37,19 +40,20 @@ class Home extends Component {
         this.props.navigator('push', {id: 'About', key: 'About'});
     }
 
-    inputPress() {
-        this.props.navigator('push', {id: 'InputWeight', key: 'InputWeight'});
+    sellPress() {
+        this.props.navigator('push', {id: 'SellInit', key: 'SellInit'});
+        // this.props.navigator('push', {id: 'ResultSelling', key: 'ResultSelling'});
     }
 
     render() {
         return (
             <View style={styles.container}>
-                <Text> Welcome to React Native! </Text>
-                <Button block onPress={this.aboutPress.bind(this)}>
-                    <Text>About author</Text>
+                <Image source={logo} style={styles.logo} />
+                <Button block style={styles.button} onPress={this.sellPress.bind(this)}>
+                    <Text style={{height: 35,fontSize: 19}}>Bán lúa</Text>
                 </Button>
-                <Button block onPress={this.inputPress.bind(this)}>
-                    <Text>Input</Text>
+                <Button block style={styles.button} onPress={this.aboutPress.bind(this)}>
+                    <Text style={{height: 35,fontSize: 19}}>Thông tin tác giả</Text>
                 </Button>
             </View>
         );
@@ -57,14 +61,25 @@ class Home extends Component {
 }
 
 
-const styles = StyleSheet.create({
+const styles = {
     container: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#F5FCFF',
     },
-});
+    logo: {
+        height: 150,
+        width: 150,
+        alignSelf: 'center',
+        marginBottom: 50,
+        borderRadius: 50,
+    },
+    button: {
+        height: 35,
+        margin: 10,
+    }
+};
 
 
 export default connect(

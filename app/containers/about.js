@@ -3,10 +3,14 @@ import {
     StyleSheet,
     Dimensions,
     View,
+    Image,
 } from 'react-native';
 import {
     Text,
     Button,
+    Container,
+    Content,
+    H1,
 } from 'native-base';
 
 import Config from '../../config';
@@ -18,48 +22,74 @@ import { ActionCreators } from '../actions';
 
 
 const {height, width} = Dimensions.get('window');
+const author = require('../images/author.jpg');
 class About extends Component {
-
     constructor(props) {
         super(props);
 
         this.state = {
         }
-
     }
 
     componentDidMount() {
-
     }
 
-     backPress() {
-         this.props.navigator('pop');
-     }
+    backPress() {
+        this.props.navigator('pop');
+    }
 
     render() {
         return (
-            <View style={styles.container}>
-                <Text>
-                    About me
-                </Text>
-                <Text>
-                    Author: Quan Vo (minhquan703@gmai.com)
-                </Text>
-                <Button block onPress={this.backPress.bind(this)}>
-                    <Text>Back</Text>
-                </Button>
-            </View>
+            <Container>
+                <Content scrollEnabled={false}>
+                    <Image source={author} style={styles.author} />
+                    <View style={styles.information}>
+                        <Text style={{
+                            fontSize: 21,
+                            fontWeight: 'bold'
+                            }}>Võ Minh Quân (MrllKing)</Text>
+                        <Text style={{
+                            fontWeight: 'bold',
+                            margin: 3
+                            }}>Software Developer</Text>
+                        <Text style={{
+                            margin: 3
+                            }}>Độc thân vui tính :), ai có con giá địa chủ 100 công đất giới thiệu cho cũng được :P</Text>
+                        <Text style={{
+                            margin: 3
+                            }}>Sở thích: Du lịch, game, guitar ...</Text>
+                        <Text style={{
+                            margin: 3,
+                            fontWeight: 'bold',
+                            }}>Thông tin liên hệ</Text>
+                        <Text style={{
+                            margin: 3,
+                            }}>Email: minhquan703@gmail.com</Text>
+                        <Text style={{
+                            margin: 3,
+                            }}>Số điện thoại:{'\n'} 08 8686 0506</Text>
+                    </View>
+                </Content>
+            </Container>
         );
     }
 }
 
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#F5FCFF',
+    logo: {
+        height: 150,
+        width: 200,
+        alignSelf: 'center',
+    },
+    information: {
+        width: 200,
+        height: 380,
+        backgroundColor: 'white',
+        opacity: .5,
+        position: 'absolute',
+        left: 10,
+        top: 10
     }
 });
 

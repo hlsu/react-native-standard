@@ -11,7 +11,10 @@ import { ActionCreators } from './actions';
 import Config from '../config';
 import Home from './containers/home';
 import About from './containers/about';
+import SellInit from './containers/sellInit';
+import ResultSelling from './containers/resultSelling'
 import InputWeight from './containers/inputWeight';
+import InputSubtract from './containers/inputSubtract';
 
 const {
   CardStack: NavigationCardStack,
@@ -31,6 +34,9 @@ class AppNav extends Component {
         'Home': Home,
         'About': About,
         'InputWeight': InputWeight,
+        'SellInit': SellInit,
+        'ResultSelling': ResultSelling,
+        'InputSubtract': InputSubtract,
       };
     this.state = {
     }

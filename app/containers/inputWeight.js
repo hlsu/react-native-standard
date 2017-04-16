@@ -10,6 +10,14 @@ import {
     Button,
     Content,
     Container,
+    InputGroup,
+    Icon,
+    Input,
+    Header,
+    Left,
+    Right,
+    Body,
+    Title
 } from 'native-base';
 import _ from 'lodash';
 
@@ -20,6 +28,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from '../actions';
 
+import ShowBlock from '../components/showBlock';
+
 
 const {height, width} = Dimensions.get('window');
 class InputWeight extends Component {
@@ -28,65 +38,100 @@ class InputWeight extends Component {
         super(props);
 
         this.state = {
-            weights: []
+            blocks: [],
+            currentBlockIndex: 0,
+            sum: 0,
+            input: null,
         }
 
     }
 
     componentDidMount() {
-        let weights = Array(900).fill().map(() => Math.floor(Math.random() * (70 - 50 + 1)) + 50);
-        this.setState({
-            weights: weights,
-        })
+        
     }
 
     addMore() {
-        let newState = this.state.weights;
-        newState.push(Math.floor(Math.random() * (70 - 50 + 1)) + 50);
+        let value = this.state.input;
+        if(_.isEmpty(value)) {
+            return;
+        }
+        value = +value;
+        let blocks = this.state.blocks;
+        let currentBlockIndex = this.state.currentBlockIndex;
+        let sum = this.state.sum + value;
+        let isCrolled = false;
+        let block = blocks[currentBlockIndex];
+        if(!block) {
+            // create new Block
+            block = {items: [], total: 0};
+            blocks.push(block);
+            isCrolled = true;
+        }
+        // add to current block
+        block.items.push(value);
+        block.total += value;
+        if(block.items.length == 5) {
+            currentBlockIndex++;
+        }
+        
         this.setState({
-            weights: newState,
+            blocks: blocks,
+            currentBlockIndex: currentBlockIndex,
+            sum: sum,
+            input: null,
         });
-        if(newState.length % 5 == 1)
+        if(isCrolled)
             setTimeout(() => {this._scrollView.scrollToEnd({ animated: true})}, 500);
     }
 
+    okPress() { 
+        console.log("Tinh tien thoi >)");
+        this.props.navigator('push', {id: 'InputSubtract', key: 'InputSubtract'})
+    }
+
     render() {
-        if (!_.isEmpty(this.state.weights)) {
-            let items = _.chunk(this.state.weights, 5);
-            let itemsView = items.map((is, isindex) => {
-                let itemView = is.map((i, iindex) => {
-                    return (
-                        <Text key={isindex * 5 + iindex}>{i}</Text>
-                    )
-                })
-                let total = is.reduce((sum, v) => sum + v, 0);
-                return (
-                    <View key={'block' + isindex} style={styles.blockWeight}>
-                        <View style={styles.blockWeightDetail}>
-                            {itemView}
-                        </View>
-                        <Text>{total}</Text>
-                    </View>
-                )
-            })
-            return (
-                <View style={styles.container}>
-                    <ScrollView horizontal={true} ref={(ref) => this._scrollView = ref}>
-                        <View style={styles.allWeight}>
-                            {itemsView}
-                        </View>
-                    </ScrollView>
-                    <Button block onPress={this.addMore.bind(this)}>
-                        <Text>Add more</Text>
-                    </Button>
-                </View>
-                
-            );
-        }
+        let blocksComomponent = this.state.blocks.map((block, index) => {
+            return <ShowBlock total={block.total} items={block.items} index={index} key={'block-' + index} />;
+            
+        })
         return (
-            <View style={styles.container}>
-                <Text>loading</Text>
-            </View>
+            <Container>
+                <Header>
+                    {/*<Left>
+                        <Button transparent>
+                            <Icon name='arrow-back' />
+                        </Button>
+                    </Left>*/}
+                    <Body>
+                        <Title>Nhập liệu</Title>
+                    </Body>
+                    <Right>
+                        <Button transparent>
+                            <Icon name='ios-close' />
+                        </Button>
+                        <Button transparent onPress={this.okPress.bind(this)}>
+                            <Icon name='ios-checkmark' />
+                        </Button>
+                    </Right>
+                </Header>
+                    <View style={styles.container}>
+                        <ScrollView horizontal={true} ref={(ref) => this._scrollView = ref}>
+                            <View style={styles.allWeight}>
+                                {blocksComomponent}
+                            </View>
+                        </ScrollView>
+                        <Text>{"Tổng: " + this.state.sum}</Text>
+                        <InputGroup>
+                            <Icon name='ios-add-circle-outline' style={{color:'#00C497'}}/>
+                            <Input keyboardType = 'numeric' 
+                                    placeholder='Nhập vào số ký'
+                                    blurOnSubmit={false}
+                                    value={this.state.input}
+                                    onSubmitEditing={this.addMore.bind(this)}
+                                    onChangeText={(input) => this.setState({input})} />
+                        </InputGroup>
+                    </View>
+            </Container>
         );
     }
 }
