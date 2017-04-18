@@ -1,0 +1,2 @@
+export const FIELD_KEY_STORAGE = 'FIELDS_MANAGEMENT';
+export const SELLING_KEY_STORAGE = 'SELLING';

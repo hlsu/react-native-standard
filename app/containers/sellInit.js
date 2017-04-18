@@ -4,7 +4,8 @@ import {
     Dimensions,
     View,
     ScrollView,
-    Image
+    Image,
+    AsyncStorage,
 } from 'react-native';
 import {
     Text,
@@ -30,6 +31,7 @@ import {
 import _ from 'lodash';
 
 import Config from '../../config';
+import { FIELD_KEY_STORAGE, SELLING_KEY_STORAGE } from '../common/const';
 
 // REDUX 
 import { connect } from 'react-redux';
@@ -54,47 +56,38 @@ class SellInit extends Component {
         let currentYear = new Date().getFullYear();
         let currentVuLua = this.getVuLua();
 
-        this.setState({
-            vuLua: [
-                {
-                    name: 'Đông Xuân',
-                    value: 'DongXuan'
-                },
-                {
-                    name: 'Hè Thu',
-                    value: 'HeThu'
-                },
-                {
-                    name: 'Thu Đông',
-                    value: 'ThuDong'
-                }
-            ],
-            years: [currentYear, currentYear - 1],
-            fields: [
-                {
-                    name: "Chọn ruộng...",
-                    value: null
-                },
-                {
-                    name: 'Tức sáp',
-                    value: 'TS'
-                },
-                {
-                    name: 'Bình bát',
-                    value: 'BT'
-                }
-            ],
-            selectedVuLua: currentVuLua,
-            selectedYear: currentYear,
-            selectedField: null,
-        })
+        AsyncStorage.getItem(FIELD_KEY_STORAGE, (err, data) => {
+            if (!err && !_.isEmpty(data)) {
+                this.setState({
+                    fields: JSON.parse(data),
+                    vuLua: [
+                        {
+                            name: 'Đông Xuân',
+                            value: 'DongXuan'
+                        },
+                        {
+                            name: 'Hè Thu',
+                            value: 'HeThu'
+                        },
+                        {
+                            name: 'Thu Đông',
+                            value: 'ThuDong'
+                        }
+                    ],
+                    years: [currentYear, currentYear - 1],
+                    selectedVuLua: currentVuLua,
+                    selectedYear: currentYear,
+                    selectedField: null,
+                });
+            }
+        });
     }
 
     getVuLua() {
         let month = new Date().getMonth();
-        if(month >=0 && month < 6) {
+        if (month >= 0 && month < 6) {
             return 'DongXuan';
-        } else if(month >= 6 && month <= 10) {
+        } else if (month >= 6 && month <= 10) {
             return 'HeThu';
         } else {
             return 'ThuDong';
@@ -102,29 +95,29 @@ class SellInit extends Component {
     }
 
     renderVuLuaPicker() {
-        if(_.isEmpty(this.state.vuLua))
+        if (_.isEmpty(this.state.vuLua))
             return null;
 
         let vuLuaItems = this.state.vuLua.map(v => {
             return (
-                <Picker.Item key={v.value} label={v.name} value={v.value} />
+                <Picker.Item key={v.value} label={v.name} value={v} />
             )
         });
         return (
             <Picker
                 mode="dropdown"
                 selectedValue={this.state.selectedVuLua}
-                onValueChange={(selected) => this.setState({selectedVuLua: selected})}
-                >
+                onValueChange={(selected) => this.setState({ selectedVuLua: selected })}
+            >
                 {vuLuaItems}
-                </Picker>
+            </Picker>
         );
     }
 
     renderYearPicker() {
-        if(_.isEmpty(this.state.years))
+        if (_.isEmpty(this.state.years))
             return null;
-        
+
         let yearItems = this.state.years.map(v => {
             return (
                 <Picker.Item key={"year-" + v} label={v + ""} value={v} />
@@ -134,31 +127,50 @@ class SellInit extends Component {
             <Picker
                 mode="dropdown"
                 selectedValue={this.state.selectedYear}
-                onValueChange={(selected) => this.setState({selectedYear: selected})}
-                >
+                onValueChange={(selected) => this.setState({ selectedYear: selected })}
+            >
                 {yearItems}
-                </Picker>
+            </Picker>
         );
     }
 
     renderFieldPicker() {
-        if(_.isEmpty(this.state.fields))
+        if (_.isEmpty(this.state.fields))
             return null;
 
         let fieldItems = this.state.fields.map(v => {
             return (
-                <Picker.Item key={v.value} label={v.name} value={v.value} />
+                <Picker.Item key={v.id} label={v.name + ' - ' + v.num + ' công'} value={v} />
             )
         });
         return (
             <Picker
                 mode="dropdown"
                 selectedValue={this.state.selectedField}
-                onValueChange={(selected) => this.setState({selectedField: selected})}
-                >
+                onValueChange={(selected) => this.setState({ selectedField: selected })}
+            >
                 {fieldItems}
-                </Picker>
+            </Picker>
         );
+    }
+
+    _nextButtonPress() {
+        // Store to localstorage
+        let sellingId = new Date().getTime();
+        let sellingInfo = {
+            vuLua: this.state.selectedVuLua,
+            year: this.state.selectedYear,
+            field: this.state.selectedField,
+            price: this.state.price,
+            id: sellingId
+        }
+        AsyncStorage.setItem(SELLING_KEY_STORAGE + '-' + sellingId, JSON.stringify({
+            done: false,
+            id: sellingId,
+            info: sellingInfo,
+        }));
+        console.log(sellingId);
+        this.props.navigator('push', { id: 'InputWeight', key: 'InputWeight', sellingId: sellingId });
     }
 
     render() {
@@ -169,7 +181,7 @@ class SellInit extends Component {
                         <Title>Bán lúa</Title>
                     </Body>
                     <Right>
-                        <Button transparent onPress={() => this.props.navigator('push', {id: 'InputWeight', key: 'InputWeight'})}>
+                        <Button transparent onPress={this._nextButtonPress.bind(this)}>
                             <Text style={styles.nextButtion}>Tiếp theo</Text>
                         </Button>
                     </Right>
@@ -187,10 +199,10 @@ class SellInit extends Component {
                     {this.renderFieldPicker()}
 
                     <Label>Giá (vnd / 1 kg)</Label>
-                    <Input keyboardType = 'numeric' 
-                            placeholder='Nhập giá ...'
-                            value={this.state.price}
-                            onChangeText={(price) => this.setState({price})} />
+                    <Input keyboardType='numeric'
+                        placeholder='Nhập giá ...'
+                        value={this.state.price}
+                        onChangeText={(price) => this.setState({ price })} />
                 </Content>
             </Container>
         );

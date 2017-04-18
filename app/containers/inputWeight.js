@@ -4,6 +4,7 @@ import {
     Dimensions,
     View,
     ScrollView,
+    AsyncStorage,
 } from 'react-native';
 import {
     Text,
@@ -22,6 +23,7 @@ import {
 import _ from 'lodash';
 
 import Config from '../../config';
+import { SELLING_KEY_STORAGE } from '../common/const';
 
 // REDUX 
 import { connect } from 'react-redux';
@@ -84,15 +86,20 @@ class InputWeight extends Component {
             setTimeout(() => {this._scrollView.scrollToEnd({ animated: true})}, 500);
     }
 
-    okPress() { 
-        console.log("Tinh tien thoi >)");
-        this.props.navigator('push', {id: 'InputSubtract', key: 'InputSubtract'})
+    _okPress() { 
+        let sellingId = this.props.sellingid;
+        console.log(sellingId);
+        AsyncStorage.mergeItem(SELLING_KEY_STORAGE + '-' + sellingId, JSON.stringify({
+            detail: this.state.blocks,
+            sum: this.state.sum
+        }))
+        
+        this.props.navigator('push', {id: 'InputSubtract', key: 'InputSubtract', sellingId: sellingId})
     }
 
     render() {
         let blocksComomponent = this.state.blocks.map((block, index) => {
             return <ShowBlock total={block.total} items={block.items} index={index} key={'block-' + index} />;
-            
         })
         return (
             <Container>
@@ -109,7 +116,7 @@ class InputWeight extends Component {
                         <Button transparent>
                             <Icon name='ios-close' />
                         </Button>
-                        <Button transparent onPress={this.okPress.bind(this)}>
+                        <Button transparent onPress={this._okPress.bind(this)}>
                             <Icon name='ios-checkmark' />
                         </Button>
                     </Right>

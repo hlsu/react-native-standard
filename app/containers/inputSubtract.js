@@ -4,7 +4,8 @@ import {
     Dimensions,
     View,
     ScrollView,
-    Image
+    Image,
+    AsyncStorage
 } from 'react-native';
 import {
     Text,
@@ -31,6 +32,7 @@ import {
 import _ from 'lodash';
 
 import Config from '../../config';
+import { SELLING_KEY_STORAGE } from '../common/const';
 
 // REDUX 
 import { connect } from 'react-redux';
@@ -52,6 +54,15 @@ class InputSubtract extends Component {
     
     }
 
+    _okPress() {
+        let sellingId = this.props.sellingid;
+        AsyncStorage.mergeItem(SELLING_KEY_STORAGE + '-' + sellingId, JSON.stringify({
+            subtractVolumn: this.state.subtractVolumn
+        }));
+        console.log(sellingId);
+        this.props.navigator('push', {id: 'ResultSelling', key: 'ResultSelling', sellingId: sellingId})
+    }
+
     render() {
         return (
             <Container>
@@ -61,7 +72,7 @@ class InputSubtract extends Component {
                     </Body>
                     <Right>
                         <Button transparent 
-                            onPress={() => this.props.navigator('push', {id: 'ResultSelling', key: 'ResultSelling'})}>
+                            onPress={this._okPress.bind(this)}>
                             <Text style={styles.nextButtion}>Tiếp theo</Text>
                         </Button>
                     </Right>

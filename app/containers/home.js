@@ -44,6 +44,9 @@ class Home extends Component {
         this.props.navigator('push', {id: 'SellInit', key: 'SellInit'});
         // this.props.navigator('push', {id: 'ResultSelling', key: 'ResultSelling'});
     }
+    fieldListPress() {
+        this.props.navigator('push', {id: 'FieldList', key: 'FieldList'});
+    }
 
     render() {
         return (
@@ -51,6 +54,9 @@ class Home extends Component {
                 <Image source={logo} style={styles.logo} />
                 <Button block style={styles.button} onPress={this.sellPress.bind(this)}>
                     <Text style={{height: 35,fontSize: 19}}>Bán lúa</Text>
+                </Button>
+                <Button block style={styles.button} onPress={this.fieldListPress.bind(this)}>
+                    <Text style={{height: 35,fontSize: 19}}>Quản lý ruộng</Text>
                 </Button>
                 <Button block style={styles.button} onPress={this.aboutPress.bind(this)}>
                     <Text style={{height: 35,fontSize: 19}}>Thông tin tác giả</Text>

@@ -15,6 +15,7 @@ import SellInit from './containers/sellInit';
 import ResultSelling from './containers/resultSelling'
 import InputWeight from './containers/inputWeight';
 import InputSubtract from './containers/inputSubtract';
+import FieldList from './containers/fieldList';
 
 const {
   CardStack: NavigationCardStack,
@@ -37,6 +38,7 @@ class AppNav extends Component {
         'SellInit': SellInit,
         'ResultSelling': ResultSelling,
         'InputSubtract': InputSubtract,
+        'FieldList': FieldList,
       };
     this.state = {
     }

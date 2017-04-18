@@ -4,7 +4,8 @@ import {
     Dimensions,
     View,
     ScrollView,
-    Image
+    Image,
+    AsyncStorage,
 } from 'react-native';
 import {
     Text,
@@ -31,6 +32,7 @@ import {
 import _ from 'lodash';
 
 import Config from '../../config';
+import { SELLING_KEY_STORAGE } from '../common/const';
 
 // REDUX 
 import { connect } from 'react-redux';
@@ -49,7 +51,11 @@ class ResultSelling extends Component {
     }
 
     componentDidMount() {
-    
+        let sellingId = this.props.sellingid;
+        console.log(sellingId);
+        AsyncStorage.getItem(SELLING_KEY_STORAGE + '-' + sellingId, (error, data) => {
+            console.log(JSON.stringify(data));
+        });
     }
 
     render() {
