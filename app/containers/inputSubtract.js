@@ -5,7 +5,8 @@ import {
     View,
     ScrollView,
     Image,
-    AsyncStorage
+    AsyncStorage,
+    ToastAndroid
 } from 'react-native';
 import {
     Text,
@@ -51,15 +52,20 @@ class InputSubtract extends Component {
     }
 
     componentDidMount() {
-    
+        AsyncStorage.getItem(SELLING_KEY_STORAGE + '-' + this.props.sellingId, (erro, data) => {
+            console.log(data);
+        });
     }
 
     _okPress() {
-        let sellingId = this.props.sellingid;
+        if(_.isEmpty(this.state.subtractVolumn)) {
+            ToastAndroid.show('Vui lòng nhập số ký trừ!', ToastAndroid.LONG);
+            return;
+        }
+        let sellingId = this.props.sellingId;
         AsyncStorage.mergeItem(SELLING_KEY_STORAGE + '-' + sellingId, JSON.stringify({
             subtractVolumn: this.state.subtractVolumn
         }));
-        console.log(sellingId);
         this.props.navigator('push', {id: 'ResultSelling', key: 'ResultSelling', sellingId: sellingId})
     }
 

@@ -6,6 +6,7 @@ import {
     ScrollView,
     Image,
     AsyncStorage,
+    ToastAndroid
 } from 'react-native';
 import {
     Text,
@@ -53,14 +54,7 @@ class SellInit extends Component {
     }
 
     componentDidMount() {
-        let currentYear = new Date().getFullYear();
-        let currentVuLua = this.getVuLua();
-
-        AsyncStorage.getItem(FIELD_KEY_STORAGE, (err, data) => {
-            if (!err && !_.isEmpty(data)) {
-                this.setState({
-                    fields: JSON.parse(data),
-                    vuLua: [
+        let vuLuas = [
                         {
                             name: 'Đông Xuân',
                             value: 'DongXuan'
@@ -73,24 +67,43 @@ class SellInit extends Component {
                             name: 'Thu Đông',
                             value: 'ThuDong'
                         }
-                    ],
+                    ];
+        let currentYear = new Date().getFullYear();
+        let currentVuLua = this.getVuLua(vuLuas);
+
+        // AsyncStorage.getAllKeys((error, data) => {
+        //     console.log(data);
+        //     data.forEach(k => {
+        //         if(k.indexOf(SELLING_KEY_STORAGE) != -1) {
+        //             AsyncStorage.removeItem(k);
+        //             console.log('remove key', k)
+        //         }
+        //     });
+        // })
+
+        AsyncStorage.getItem(FIELD_KEY_STORAGE, (err, data) => {
+            if (!err && !_.isEmpty(data)) {
+                let fields = JSON.parse(data);
+                this.setState({
+                    fields: fields,
+                    vuLua: vuLuas,
                     years: [currentYear, currentYear - 1],
                     selectedVuLua: currentVuLua,
                     selectedYear: currentYear,
-                    selectedField: null,
+                    selectedField: fields[0],
                 });
             }
         });
     }
 
-    getVuLua() {
+    getVuLua(vuLuas) {
         let month = new Date().getMonth();
         if (month >= 0 && month < 6) {
-            return 'DongXuan';
+            return vuLuas[0];
         } else if (month >= 6 && month <= 10) {
-            return 'HeThu';
+            return vuLuas[1];
         } else {
-            return 'ThuDong';
+            return vuLuas[2];
         }
     }
 
@@ -156,7 +169,12 @@ class SellInit extends Component {
 
     _nextButtonPress() {
         // Store to localstorage
-        let sellingId = new Date().getTime();
+        if(_.isEmpty(this.state.price)) {
+            ToastAndroid.show('Vui lòng nhập giá bán!', ToastAndroid.LONG);
+            return;
+        }
+
+        let sellingId = this.state.sellingId || new Date().getTime();
         let sellingInfo = {
             vuLua: this.state.selectedVuLua,
             year: this.state.selectedYear,
@@ -169,7 +187,9 @@ class SellInit extends Component {
             id: sellingId,
             info: sellingInfo,
         }));
-        console.log(sellingId);
+        this.setState({
+            sellingId: sellingId
+        })
         this.props.navigator('push', { id: 'InputWeight', key: 'InputWeight', sellingId: sellingId });
     }
 

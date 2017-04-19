@@ -26,13 +26,16 @@ import {
     Item,
     Label,
     Picker,
-    H2
+    H2,
+    Card,
+    CardItem
 } from 'native-base';
 
 import _ from 'lodash';
 
 import Config from '../../config';
 import { SELLING_KEY_STORAGE } from '../common/const';
+import CommonUtils from '../common/commonUtils';
 
 // REDUX 
 import { connect } from 'react-redux';
@@ -51,11 +54,65 @@ class ResultSelling extends Component {
     }
 
     componentDidMount() {
-        let sellingId = this.props.sellingid;
-        console.log(sellingId);
-        AsyncStorage.getItem(SELLING_KEY_STORAGE + '-' + sellingId, (error, data) => {
-            console.log(JSON.stringify(data));
+        let sellingId = this.props.sellingId || 1492617455226   ;
+        AsyncStorage.getItem(SELLING_KEY_STORAGE + '-' + sellingId, (error, dataStr) => {
+            console.log(dataStr);
+            let data = JSON.parse(dataStr);
+            let info = data.info;
+            let price = +data.info.price;
+            let total = data.sum;
+            let subtractVolumn = +data.subtractVolumn;
+            let finalTotal = total - subtractVolumn;
+            let finalMoney = finalTotal * price;
+            let moneyStr = CommonUtils.convertNumberToString(finalMoney);
+
+            this.setState({
+                info: info,
+                price: price,
+                total: total,
+                subtractVolumn: subtractVolumn,
+                finalTotal: finalTotal,
+                finalMoney: finalMoney,
+                moneyStr: moneyStr
+            })
         });
+    }
+
+    renderContent() {
+        if (this.state.info) {
+            return (
+                <View>
+                    <H2>{'Ruộng: ' + this.state.info.field.name}</H2>
+                    <Card>
+                        <CardItem>
+                            <Body>
+                                <Text>{'Vụ ' + this.state.info.vuLua.name + ' năm ' + this.state.info.year}</Text>
+                                <Text>{'Số công: ' + this.state.info.field.num}</Text>
+                                <Text>{'Giá bán: ' + this.state.price}</Text>
+                            </Body>
+                        </CardItem>
+                    </Card>
+                    <Card>
+                        <CardItem>
+                            <Body>
+                                <Text>{'Tổng số ký: ' + this.state.total}</Text>
+                                <Text>{'Trừ bao: ' + this.state.subtractVolumn}</Text>
+                                <Text>{'Tổng cuối: ' + this.state.finalTotal}</Text>
+                            </Body>
+                        </CardItem>
+                    </Card>
+                    <Card>
+                        <CardItem>
+                            <Body>
+                                <Text>{'Tổng tiền: ' + this.state.finalMoney}</Text>
+                                <Text>{this.state.moneyStr}</Text>
+                            </Body>
+                        </CardItem>
+                    </Card>
+                </View>
+            )
+        }
+        return null;
     }
 
     render() {
@@ -67,19 +124,7 @@ class ResultSelling extends Component {
                     </Body>
                 </Header>
                 <Content>
-                <View>
-                    <H2>Miến đìa bình bát</H2>
-                    <Text>Vụ đông xuân năm 2017</Text>
-                    <Text>---</Text>
-                    <Text>Tổng số bao: 124 bao</Text>
-                    <Text>Tổng số ký: 12036kg</Text>
-                    <Text>Trừ bao: 8kg</Text>
-                    <Text>Tổng: 12354kg</Text>
-                    <Text>Giá: 5550 đồng</Text>
-                    <Text>---</Text>
-                    <Text>Thành tiền: 1.223.213.121</Text>
-                    <Text>Một tỉ, 2 trăm bảy mươi lăm triệu, bảy mười mốn ngàn chẳn</Text>
-                </View>
+                    {this.renderContent()}
                 </Content>
             </Container>
         );

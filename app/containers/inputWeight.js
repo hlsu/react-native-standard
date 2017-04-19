@@ -49,7 +49,9 @@ class InputWeight extends Component {
     }
 
     componentDidMount() {
-        
+        AsyncStorage.getItem(SELLING_KEY_STORAGE + '-' + this.props.sellingId, (error, data) => {
+            console.log(data);
+        });
     }
 
     addMore() {
@@ -87,14 +89,12 @@ class InputWeight extends Component {
     }
 
     _okPress() { 
-        let sellingId = this.props.sellingid;
-        console.log(sellingId);
+        let sellingId = this.props.sellingId;
         AsyncStorage.mergeItem(SELLING_KEY_STORAGE + '-' + sellingId, JSON.stringify({
             detail: this.state.blocks,
             sum: this.state.sum
-        }))
-        
-        this.props.navigator('push', {id: 'InputSubtract', key: 'InputSubtract', sellingId: sellingId})
+        }));
+        this.props.navigator('push', {id: 'InputSubtract', key: 'InputSubtract', sellingId: sellingId});
     }
 
     render() {
