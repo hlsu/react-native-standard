@@ -44,6 +44,7 @@ class InputWeight extends Component {
             currentBlockIndex: 0,
             sum: 0,
             input: null,
+            count: 0,
         }
 
     }
@@ -63,6 +64,7 @@ class InputWeight extends Component {
         let blocks = this.state.blocks;
         let currentBlockIndex = this.state.currentBlockIndex;
         let sum = this.state.sum + value;
+        let count = this.state.count + 1;
         let isCrolled = false;
         let block = blocks[currentBlockIndex];
         if(!block) {
@@ -83,6 +85,7 @@ class InputWeight extends Component {
             currentBlockIndex: currentBlockIndex,
             sum: sum,
             input: null,
+            count: count,
         });
         if(isCrolled)
             setTimeout(() => {this._scrollView.scrollToEnd({ animated: true})}, 500);
@@ -92,7 +95,8 @@ class InputWeight extends Component {
         let sellingId = this.props.sellingId;
         AsyncStorage.mergeItem(SELLING_KEY_STORAGE + '-' + sellingId, JSON.stringify({
             detail: this.state.blocks,
-            sum: this.state.sum
+            sum: this.state.sum,
+            count: this.state.count
         }));
         this.props.navigator('push', {id: 'InputSubtract', key: 'InputSubtract', sellingId: sellingId});
     }
@@ -127,7 +131,7 @@ class InputWeight extends Component {
                                 {blocksComomponent}
                             </View>
                         </ScrollView>
-                        <Text>{"Tổng: " + this.state.sum}</Text>
+                        <Text>{"Tổng: " + this.state.sum + "kg - " + this.state.count + " bao"}</Text>
                         <InputGroup>
                             <Icon name='ios-add-circle-outline' style={{color:'#00C497'}}/>
                             <Input keyboardType = 'numeric' 

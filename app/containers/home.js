@@ -47,6 +47,12 @@ class Home extends Component {
     fieldListPress() {
         this.props.navigator('push', {id: 'FieldList', key: 'FieldList'});
     }
+    debug() {
+        this.props.navigator('push', {id: 'LocalStorage', key: 'LocalStorage'});
+    }
+    showHistory() {
+        this.props.navigator('push', {id: 'HistorySelling', key: 'HistorySelling'});
+    }
 
     render() {
         return (
@@ -58,8 +64,14 @@ class Home extends Component {
                 <Button block style={styles.button} onPress={this.fieldListPress.bind(this)}>
                     <Text style={{height: 35,fontSize: 19}}>Quản lý ruộng</Text>
                 </Button>
+                <Button block style={styles.button} onPress={this.showHistory.bind(this)}>
+                    <Text style={{height: 35,fontSize: 19}}>Lịch sử bán lúa</Text>
+                </Button>
                 <Button block style={styles.button} onPress={this.aboutPress.bind(this)}>
                     <Text style={{height: 35,fontSize: 19}}>Thông tin tác giả</Text>
+                </Button>
+                <Button block style={styles.button} onPress={this.debug.bind(this)}>
+                    <Text style={{height: 35,fontSize: 19}}>Localstogare (debug)</Text>
                 </Button>
             </View>
         );

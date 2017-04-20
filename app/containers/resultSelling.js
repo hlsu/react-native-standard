@@ -65,6 +65,7 @@ class ResultSelling extends Component {
             let finalTotal = total - subtractVolumn;
             let finalMoney = finalTotal * price;
             let moneyStr = CommonUtils.convertNumberToString(finalMoney);
+            let count = data.count || 0;
 
             this.setState({
                 info: info,
@@ -73,7 +74,8 @@ class ResultSelling extends Component {
                 subtractVolumn: subtractVolumn,
                 finalTotal: finalTotal,
                 finalMoney: finalMoney,
-                moneyStr: moneyStr
+                moneyStr: moneyStr,
+                count: count
             })
         });
     }
@@ -95,6 +97,7 @@ class ResultSelling extends Component {
                     <Card>
                         <CardItem>
                             <Body>
+                                <Text>{'Tổng số bao: ' + this.state.count}</Text>
                                 <Text>{'Tổng số ký: ' + this.state.total}</Text>
                                 <Text>{'Trừ bao: ' + this.state.subtractVolumn}</Text>
                                 <Text>{'Tổng cuối: ' + this.state.finalTotal}</Text>
@@ -115,6 +118,24 @@ class ResultSelling extends Component {
         return null;
     }
 
+    done() {
+        let sellingId = this.props.sellingId;
+        AsyncStorage.mergeItem(SELLING_KEY_STORAGE + '-' + sellingId, JSON.stringify({
+            done: true
+        }));
+        this.props.navigator('home');
+    }
+
+    renderActionButton() {
+        return (
+            <View>
+                <Button block primary onPress={this.done.bind(this)}>
+                    <Text>Xong</Text>
+                </Button>
+            </View>
+        )
+    }
+
     render() {
         return (
             <Container>
@@ -125,6 +146,7 @@ class ResultSelling extends Component {
                 </Header>
                 <Content>
                     {this.renderContent()}
+                    {this.renderActionButton()}
                 </Content>
             </Container>
         );

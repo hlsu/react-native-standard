@@ -16,7 +16,8 @@ import ResultSelling from './containers/resultSelling'
 import InputWeight from './containers/inputWeight';
 import InputSubtract from './containers/inputSubtract';
 import FieldList from './containers/fieldList';
-
+import LocalStorage from './containers/localstorage';
+import HistorySelling from './containers/historySelling';
 const {
   CardStack: NavigationCardStack,
   StateUtils: NavigationStateUtils
@@ -39,6 +40,8 @@ class AppNav extends Component {
         'ResultSelling': ResultSelling,
         'InputSubtract': InputSubtract,
         'FieldList': FieldList,
+        'LocalStorage': LocalStorage,
+        'HistorySelling': HistorySelling,
       };
     this.state = {
     }
